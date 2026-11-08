@@ -3,216 +3,211 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Caderno de Treino</title>
+<title>Mjölnir — O Martelo do Treino</title>
 
 <!-- Configurações de PWA -->
-<meta name="theme-color" content="#2250B4">
+<meta name="theme-color" content="#161F29">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Treino">
+<meta name="apple-mobile-web-app-title" content="Mjölnir">
 <link rel="apple-touch-icon" href="icon-192.png">
-
-<!-- Manifesto PWA embutido via Blob ou link separado -->
 <link rel="manifest" href="manifest.json">
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <style>
-/* Layout: app de celular, uma coluna, barra de abas fixa embaixo.
-   Cartões só onde há ação (exercício); o resto é texto corrido com régua fina. */
 :root{
-  --bg:#EEF1F4; --surface:#FFFFFF; --surface-2:#E4E9EE; --ink:#13202C; --muted:#566574; --line:#CBD4DC;
-  --accent:#2250B4; --accent-ink:#FFFFFF; --accent-soft:#DAE4F8;
-  --ok:#1B7A47; --ok-soft:#D8EFE2; --warn:#8F5400; --warn-soft:#FAEACB; --bad:#B3261E; --bad-soft:#F8D9D6;
+  --bg:#0A0E13; --surface:#131B24; --surface-2:#1C2633; --ink:#F0F4F8; --muted:#8A9BA8; --line:#273546;
+  --accent:#3B82F6; --accent-ink:#FFFFFF; --accent-soft:#1E293B;
+  --ok:#10B981; --ok-soft:#064E3B; --warn:#F59E0B; --warn-soft:#451A03; --bad:#EF4444; --bad-soft:#450A0A;
   --font-display:'Barlow Condensed','Arial Narrow',system-ui,sans-serif;
   --font-body:'Barlow',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --r:8px;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0E151C; --surface:#161F29; --surface-2:#202B37; --ink:#E6EDF3; --muted:#9AA9B7; --line:#2C3947;
-    --accent:#7EA8F5; --accent-ink:#0B1626; --accent-soft:#1D2E4C;
-    --ok:#5FCB92; --ok-soft:#173326; --warn:#E8B04A; --warn-soft:#37290F; --bad:#F0827A; --bad-soft:#3B1B19;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0E151C; --surface:#161F29; --surface-2:#202B37; --ink:#E6EDF3; --muted:#9AA9B7; --line:#2C3947;
-  --accent:#7EA8F5; --accent-ink:#0B1626; --accent-soft:#1D2E4C;
-  --ok:#5FCB92; --ok-soft:#173326; --warn:#E8B04A; --warn-soft:#37290F; --bad:#F0827A; --bad-soft:#3B1B19;
-  color-scheme:dark;
+  --r:10px;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.45}
-.wrap{max-width:720px;margin:0 auto;padding-block:18px 110px;
+.wrap{max-width:720px;margin:0 auto;padding-block:18px 130px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;text-wrap:balance;line-height:1.1}
-h1{font-size:34px;letter-spacing:.01em}
-h2{font-size:24px;margin-top:28px;margin-bottom:8px}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;text-wrap:balance;line-height:1.1;letter-spacing:.03em;text-transform:uppercase}
+h1{font-size:36px;color:#FFFFFF;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+h2{font-size:24px;margin-top:28px;margin-bottom:8px;color:#E2E8F0}
 h3{font-size:21px;font-weight:600}
 p{margin:0}
-.sub{color:var(--muted);margin-top:4px}
+.sub{color:var(--muted);margin-top:4px;font-size:15px;letter-spacing:.05em}
 .stack{display:flex;flex-direction:column;gap:12px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.3)}
 .muted{color:var(--muted)}
 small{font-size:13px;color:var(--muted)}
 a{color:var(--accent)}
-.note{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:10px 12px;font-size:15px;margin-top:12px}
+.note{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px 14px;font-size:15px;margin-top:12px}
 .note.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--ink)}
 .note.warn{background:var(--warn-soft);border-color:var(--warn)}
 
-/* abas */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;background:var(--surface);border-top:1px solid var(--line);
+/* Cronômetro flutuante estilizado */
+#timer-bar{position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom,0px));z-index:8;
+  background:var(--surface);border-top:2px solid var(--accent);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -6px 16px rgba(0,0,0,0.5)}
+#timer-bar.hidden{display:none}
+.timer-info{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--accent)}
+.timer-actions{display:flex;gap:8px}
+
+/* abas estilo militar/nórdico */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;background:var(--surface);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.nav a{flex:1;text-align:center;padding:13px 4px 12px;font-family:var(--font-display);font-weight:600;font-size:18px;letter-spacing:.06em;
+.nav a{flex:1;text-align:center;padding:13px 4px 12px;font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:.08em;
   text-transform:uppercase;text-decoration:none;color:var(--muted)}
-.nav a[aria-current="page"]{color:var(--ink);box-shadow:inset 0 3px 0 var(--accent)}
-.nav a:focus-visible,.btn:focus-visible,.chip:focus-visible,.tipbtn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.nav a[aria-current="page"]{color:var(--accent);background:var(--surface-2);box-shadow:inset 0 3px 0 var(--accent)}
+.nav a:focus-visible,.btn:focus-visible,.chip:focus-visible,.tipbtn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* botões */
-.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:var(--r);
-  padding:12px 16px;min-height:46px;cursor:pointer}
+.btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:var(--r);
+  padding:12px 16px;min-height:46px;cursor:pointer;transition:all .1s ease}
+.btn:hover{background:var(--line)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.danger{border-color:var(--bad);color:var(--bad)}
-.btn.small{min-height:40px;padding:8px 12px;font-size:15px}
-.btn:disabled{opacity:.5;cursor:default}
+.btn.primary:hover{background:#2563EB}
+.btn.danger{border-color:var(--bad);color:var(--bad);background:var(--bad-soft)}
+.btn.small{min-height:36px;padding:6px 12px;font-size:14px}
+.btn:disabled{opacity:.4;cursor:default}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.timer-presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.timer-presets span{font-size:14px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
 
 /* escolha do dia */
 .chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
 .chip{font-family:var(--font-display);font-weight:700;font-size:24px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
-  border-radius:var(--r);padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;min-height:60px;justify-content:center}
-.chip small{font-family:var(--font-body);font-weight:500;line-height:1.1}
+  border-radius:var(--r);padding:8px 4px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;min-height:65px;justify-content:center}
+.chip small{font-family:var(--font-body);font-weight:500;line-height:1.1;font-size:11px;letter-spacing:.05em;text-transform:uppercase}
 .chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .chip.on small{color:var(--accent-ink)}
-.chip:disabled{opacity:.45;cursor:default}
-.meta{margin-top:12px;color:var(--muted)}
+.chip:disabled{opacity:.35;cursor:default}
+.meta{margin-top:12px;color:var(--muted);font-weight:500}
 
 /* exercício */
 .ex-head{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
-.ex-head h3{flex:1 1 200px;min-width:0}
-.tag{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:2px 6px;color:var(--muted);white-space:nowrap}
+.ex-head h3{flex:1 1 200px;min-width:0;color:#FFFFFF}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:3px 8px;color:var(--muted);white-space:nowrap;background:var(--surface-2)}
 .tag.warn{color:var(--warn);border-color:var(--warn);background:var(--warn-soft)}
 .tag.bad{color:var(--bad);border-color:var(--bad);background:var(--bad-soft)}
 .tag.ok{color:var(--ok);border-color:var(--ok);background:var(--ok-soft)}
 .eqrow{display:flex;gap:10px;align-items:center;margin-top:10px}
 .eqrow label{font-size:14px;color:var(--muted);flex:none}
-.sug{margin-top:10px;padding:8px 10px;border-radius:6px;background:var(--surface-2);font-size:15px}
-.sug.up{background:var(--ok-soft)}
-.sug.bulge{background:var(--warn-soft)}
-.sets{display:flex;flex-direction:column;gap:2px;margin-top:10px}
-.set{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.sug{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--surface-2);font-size:14px;border-left:3px solid var(--accent)}
+.sug.up{background:var(--ok-soft);border-left-color:var(--ok)}
+.sug.bulge{background:var(--warn-soft);border-left-color:var(--warn)}
+.sets{display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.set{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .set:first-child{border-top:0}
 .sl{min-width:0}
-.sl b{display:block;font-family:var(--font-display);font-size:19px;font-weight:600;line-height:1.1}
-.sl span{display:block;font-size:13px;color:var(--muted);line-height:1.25;margin-top:2px}
-.si{display:grid;grid-template-columns:80px 14px 80px;gap:6px;align-items:center}
+.sl b{display:block;font-family:var(--font-display);font-size:20px;font-weight:600;line-height:1.1;letter-spacing:.03em;color:#E2E8F0}
+.sl span{display:block;font-size:12px;color:var(--muted);line-height:1.25;margin-top:2px}
+.si{display:grid;grid-template-columns:85px 14px 85px 46px;gap:6px;align-items:center}
 .si .x{color:var(--muted);text-align:center}
 input[type=text],select,textarea{font:inherit;font-size:17px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;width:100%;min-width:0}
-input.num{text-align:center;font-variant-numeric:tabular-nums;font-weight:600;font-size:20px;padding:10px 4px}
+input.num{text-align:center;font-variant-numeric:tabular-nums;font-weight:700;font-size:20px;padding:10px 4px}
 textarea{resize:vertical;line-height:1.4}
-.chk{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:15px}
-.chk input{width:22px;height:22px;margin:1px 0 0;flex:none;accent-color:var(--accent)}
-.sets-actions{display:flex;gap:8px;margin-top:10px}
-.warm{margin-top:12px;font-size:15px}
-.tipbtn{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;margin-top:10px;padding:10px 0 2px;font:inherit;font-weight:600;font-size:15px;
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:14px}
+.chk input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--accent)}
+.sets-actions{display:flex;gap:8px;margin-top:12px}
+.tipbtn{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;margin-top:12px;padding:10px 0 2px;font:inherit;font-weight:600;font-size:14px;
   color:var(--accent);background:none;border:0;border-top:1px solid var(--line);cursor:pointer;text-align:left}
 .tipbtn small{font-weight:400}
-.tip{margin-top:6px;font-size:15px}
-.tipc{margin-top:6px;color:var(--warn)}
+.tip{margin-top:6px;font-size:14px;color:var(--muted);padding:8px;background:var(--bg);border-radius:6px}
 
-/* plano */
 .day-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .list{list-style:none;margin:10px 0 0;padding:0}
-.list li{display:flex;gap:10px;justify-content:space-between;align-items:baseline;padding:8px 0;border-top:1px solid var(--line)}
+.list li{display:flex;gap:10px;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
 .list li:first-child{border-top:0}
-.list .nm{min-width:0;flex:1}
-.list .nm small{display:block;margin-top:2px}
-.list .sr{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.list .nm{min-width:0;flex:1;font-weight:500}
+.list .sr{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;color:var(--accent)}
 
-/* regras */
-.rule{border-top:1px solid var(--line);padding:14px 0}
-.rule:first-of-type{border-top:0}
-.rule h3{margin-bottom:6px}
-.rule .why{margin-top:6px;font-size:15px;color:var(--muted)}
-.src{margin:8px 0 0;padding-left:18px;font-size:14px}
-.rel{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
-.rel:first-of-type{border-top:0}
-.rel input{width:22px;height:22px;margin:2px 0 0;flex:none;accent-color:var(--accent)}
-.rel small{display:block;margin-top:2px}
-
-/* dados */
-details{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:0 12px;margin-top:8px}
-summary{cursor:pointer;padding:12px 0;font-weight:600}
-details .inner{padding-bottom:12px;font-size:15px}
-.hist-line{display:flex;gap:10px;justify-content:space-between;padding:4px 0}
+details{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:0 14px;margin-top:8px}
+summary{cursor:pointer;padding:14px 0;font-weight:600}
+details .inner{padding-bottom:14px;font-size:14px}
+.hist-line{display:flex;gap:10px;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
+.hist-line:last-child{border-bottom:0}
 .hist-line span:first-child{min-width:0}
-.hist-line span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.hist-line span:last-child{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
 
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:9;
-  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-weight:500;max-width:calc(100vw - 32px)}
-@media (prefers-reduced-motion:no-preference){ .btn,.chip{transition:background-color .12s,border-color .12s} }
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(126px + env(safe-area-inset-bottom,0px));z-index:10;
+  background:var(--accent);color:var(--accent-ink);padding:12px 20px;border-radius:var(--r);font-weight:700;max-width:calc(100vw - 32px);box-shadow:0 4px 12px rgba(0,0,0,0.4);letter-spacing:.03em}
 @media (min-width:560px){ .wrap{padding-top:28px} }
 </style>
 </head>
 <body>
 
 <div class="wrap"><div id="app"></div></div>
+
+<!-- Barra de Cronômetro Flutuante Estilizada -->
+<div id="timer-bar" class="hidden">
+  <div class="timer-info">
+    <span>⚡ DESCANSO:</span>
+    <span id="timer-display">00:00</span>
+  </div>
+  <div class="timer-actions">
+    <button type="button" class="btn small primary" data-timer-act="pause">Pausar</button>
+    <button type="button" class="btn small danger" data-timer-act="stop">Parar</button>
+  </div>
+</div>
+
 <div id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
 (function(){
 'use strict';
 
-/* ---------- dados fixos ---------- */
-const KEY='caderno-treino-v2';
+const KEY='mjolnir-treino-v3';
 
 const COLS=[
-  {id:'f1',nm:'Feeder 1',sh:'F1',min:1.5,info:'6 a 8 repetições na maioria dos exercícios'},
-  {id:'f2',nm:'Feeder 2',sh:'F2',min:1.5,info:'5 a 6 repetições na maioria dos exercícios'},
+  {id:'f1',nm:'Feeder 1',sh:'F1',min:1.5,info:'6 a 8 repetições'},
+  {id:'f2',nm:'Feeder 2',sh:'F2',min:1.5,info:'5 a 6 repetições'},
   {id:'w1',nm:'Working 1',sh:'W1',min:2,info:'8 a 12 repetições'},
-  {id:'w2',nm:'Working 2',sh:'W2',min:3,info:'cluster na maioria dos exercícios, intervalo de 2 a 3 min'},
-  {id:'bo',nm:'Back-off',sh:'BO',min:1.5,info:'10 a 12 repetições (12 a 15 em alguns), intervalo de 1 a 2 min'}
+  {id:'w2',nm:'Working 2',sh:'W2',min:3,info:'cluster, 2 a 3 min'},
+  {id:'bo',nm:'Back-off',sh:'BO',min:1.5,info:'10 a 12 repetições'}
 ];
 const COLN={};COLS.forEach(c=>{COLN[c.id]=c;});
 const WARM_MIN=5;
-const LIMIT_MIN=65;
 
 const RESTR=[
-  {id:'barra',t:'Agachamento livre com barra',why:'Carga alta somada à pressão dentro do abdômen. Com Smith ou hack você treina sem liberar.'},
-  {id:'abdominal',t:'Exercícios de abdômen (elevação de membros inferiores e abdominal crunch)',why:'Fazem o meio da barriga abaular, onde você percebe a crista.'}
+  {id:'barra',t:'Agachamento livre com barra',why:'Carga alta com pressão abdominal. Prefira Smith ou hack.'},
+  {id:'abdominal',t:'Exercícios de abdômen',why:'Risco na região da cirurgia.'}
 ];
 
 const EQ3=['halter','cabo','máquina'];
 const LAB4={f2:'Working 1',w1:'Working 2',w2:'Working 3',bo:'Working 4'};
+
 const EX={
   a1:{n:'Crucifixo inclinado',m:'Peito',eq:EQ3,s:'6-8|5-6|10-12|C|10-12',step:2.5},
   a2:{n:'Supino inclinado',m:'Peito',eq:EQ3,s:'6-8|5-6|10-12|C|10-12',step:2.5},
   a3:{n:'Supino reto',m:'Peito',eq:['Smith','máquina','livre'],s:'6-8|5-6|8-10|C|10-12',step:2.5,caution:true},
   a4:{n:'Supino declinado ou crossover',m:'Peito',eq:EQ3,s:'6-8|5-6|8-10|C|10-12',step:2.5},
-  a5:{n:'Elevações laterais',m:'Ombros',eq:EQ3,s:'6-8|5-6|8-10|C|10-12',step:1},
-  a6:{n:'Tríceps francês',m:'Tríceps',eq:['cabo','halter','máquina'],s:'6-8|6-8|10-12|C|10-12',step:2.5},
-  a7:{n:'Tríceps corda no cabo',m:'Tríceps',s:'6-8|5-6|10-12|C|10-12',step:2.5},
-  a8:{n:'Elevação de membros inferiores sentado no banco',m:'Abdômen',fixed:{n:4,t:'15 a 20'},block:'abdominal'},
+  a5:{n:'Tríceps francês (Foco Tríceps)',m:'Tríceps',eq:['cabo','halter','máquina'],s:'6-8|6-8|10-12|C|10-12',step:2.5},
+  a6:{n:'Tríceps corda no cabo (Foco Tríceps)',m:'Tríceps',s:'6-8|5-6|10-12|C|10-12',step:2.5},
+  a7:{n:'Elevações laterais (Ombro Lateral)',m:'Ombros',eq:EQ3,s:'6-8|5-6|8-10|C|12-15',step:1},
+  a8:{n:'Elevação de membros inferiores',m:'Abdômen',fixed:{n:4,t:'15 a 20'},block:'abdominal'},
+
   b1:{n:'Agachamento',m:'Quadríceps',eq:['Smith','hack','livre'],eqBlock:{livre:'barra'},s:'6-8|5-6|8-10|8-10|10-12',step:5,caution:true},
   b2:{n:'Avanço / afundo',m:'Quadríceps',s:'6-8|5-6|8-10|C|10-12',step:2},
   b3:{n:'Leg press',m:'Quadríceps',s:'6-8|5-6|10-12|C|10-12',step:5},
   b4:{n:'Cadeira extensora',m:'Quadríceps',s:'6-8|5-6|10-12|C|10-12',step:2.5},
   b5:{n:'Mesa / cadeira flexora',m:'Posterior',s:'6-8|5-6|10-12|C|10-12',step:2.5},
   b6:{n:'Panturrilha no leg press',m:'Panturrilha',s:'8-10|12-15|12-15|12-15|12-15',lab:LAB4,step:5},
-  c1:{n:'Puxada aberta pronada',m:'Costas',s:'6-8|6-8|10-12|C|10-12',step:2.5},
+
+  c1:{n:'Puxada aberta pronada (Foco Dorsais)',m:'Costas',s:'6-8|6-8|10-12|C|10-12',step:2.5},
   c2:{n:'Remada curvada',m:'Costas',s:'6-8|6-8|10-12|10-12|10-12',step:2.5,caution:true},
-  c3:{n:'Remada unilateral',m:'Costas',s:'6-8|6-8|10-12|C|10-12',step:2},
+  c3:{n:'Remada unilateral (Foco Dorsais)',m:'Costas',s:'6-8|6-8|10-12|C|10-12',step:2},
   c4:{n:'Remada baixa supinada',m:'Costas',s:'6-8|6-8|10-12|C|10-12',step:2.5},
   c5:{n:'Rosca Scott',m:'Bíceps',s:'6-8|6-8|10-12|C|10-12',step:2.5},
   c6:{n:'Rosca martelo',m:'Bíceps',eq:['cabo','halter','barra livre'],s:'6-8|6-8|10-12|C|10-12',step:2},
   c7:{n:'Abdominal crunch',m:'Abdômen',fixed:{n:4,t:'20 a 30'},block:'abdominal'},
-  d1:{n:'Desenvolvimento',m:'Ombros',eq:EQ3,s:'6-8|6-8|10-12|C|10-12',step:2},
-  d2:{n:'Elevações laterais',m:'Ombros',eq:EQ3,s:'6-8|6-8|10-12|C|12-15',step:1},
+
+  d1:{n:'Elevações laterais estritas (Ombro Lateral)',m:'Ombros',eq:EQ3,s:'6-8|6-8|10-12|C|12-15',step:1},
+  d2:{n:'Desenvolvimento para ombros',m:'Ombros',eq:EQ3,s:'6-8|6-8|10-12|C|10-12',step:2},
   d3:{n:'Crucifixo inverso',m:'Ombros',s:'6-8|6-8|10-12|C|12-15',step:2.5},
   d4:{n:'Elevações pélvicas',m:'Glúteos',s:'6-8|6-8|10-12|C|10-12',step:5,caution:true},
   d5:{n:'Mesa / cadeira flexora',m:'Posterior',s:'6-8|6-8|10-12|C|12-15',step:2.5},
   d6:{n:'Stiff',m:'Posterior',s:'6-8|6-8|10-12|10-12|12-15',step:5,caution:true},
   d7:{n:'Panturrilha em pé',m:'Panturrilha',s:'8-10|12-15|12-15|12-15|12-15',lab:LAB4,step:5}
 };
+
 Object.keys(EX).forEach(id=>{
   const ex=EX[id];ex.id=id;
   if(ex.s){
@@ -226,80 +221,27 @@ Object.keys(EX).forEach(id=>{
 });
 
 const DAYS=[
-  {id:'A',title:'Peito, ombro e tríceps',items:['a1','a2','a3','a4','a5','a6','a7','a8']},
+  {id:'A',title:'Peito, tríceps e ombro lateral',items:['a1','a2','a3','a4','a5','a6','a7','a8']},
   {id:'B',title:'Pernas',items:['b1','b2','b3','b4','b5','b6']},
-  {id:'C',title:'Costas e bíceps',items:['c1','c2','c3','c4','c5','c6','c7']},
-  {id:'D',title:'Ombros, femorais e panturrilha',items:['d1','d2','d3','d4','d5','d6','d7']}
+  {id:'C',title:'Costas (Dorsais) e bíceps',items:['c1','c2','c3','c4','c5','c6','c7']},
+  {id:'D',title:'Ombro lateral dominante e femorais',items:['d1','d2','d3','d4','d5','d6','d7']}
 ];
 
-const T_LAT={p:'28, 29',t:'Suba até a horizontal: acima disso o trapézio e o deltoide anterior assumem. Varie o ponto de partida do haltere (ao lado, atrás ou na frente das coxas) para pegar todos os feixes do deltoide médio. Nunca muito pesado.'};
-const T_FLEX={p:'86, 87',t:'Com a ponta do pé estendida, os posteriores da coxa trabalham mais. Com o pé em flexão (ponta para cima), o gastrocnêmio ajuda mais. Segundo o livro, girar o pé para dentro ou para fora quase não muda nada na prática. O livro descreve isso para a mesa e para a flexora em pé.'};
 const TIPS={
-  a1:{p:'52, 50',t:'Banco entre 45° e 60°, cotovelos levemente flexionados. No fim, segure um instante com as mãos juntas: o livro diz que a pausa enfatiza a parte esternal do peitoral. No crucifixo com halteres, o livro diz nunca usar carga muito pesada.'},
-  a2:{p:'51, 49',t:'Banco até 60°: acima disso o ombro assume o trabalho. Com os halteres face a face no topo, o livro diz que a parte esternal do peitoral trabalha mais. Os halteres deixam descer mais fundo que a barra, o que alonga mais o peitoral.'},
-  a3:{p:'42, 43',t:'Pegada mais estreita chama mais a parte central do peitoral; mais larga, a parte externa. Cotovelos junto ao corpo passam trabalho para o deltoide anterior. O livro descreve também arquear as costas para levantar mais carga; como isso aumenta a exigência sobre o tronco, evite por enquanto.'},
-  a4:{p:'46, 54',t:'No supino declinado, o livro diz que os feixes inferiores do peitoral trabalham mais. No crucifixo em pé na polia (crossover), cruzar os braços no fim enfatiza a parte externa do peitoral, e a inclinação do tronco e o ângulo dos braços mudam a ênfase.'},
-  a5:T_LAT,
-  a6:{p:'18, 19',t:'Com o braço na vertical, a porção longa do tríceps fica alongada e trabalha mais. Não arqueie as costas: o livro manda contrair a cintura abdominal para isso e usar, se possível, banco com encosto baixo. Expire no esforço.'},
-  a7:{p:'13',t:'Cotovelos colados ao corpo. Segure 1 a 2 segundos no final: o livro diz que isso deixa o esforço mais perceptível. A corda enfatiza a cabeça lateral do tríceps.'},
-  b1:{p:'84',t:'No hack, quanto mais à frente os pés, mais os glúteos participam; quanto mais afastados, mais os adutores. O livro diz que contrair a cintura abdominal evita movimentos laterais da pelve e da coluna (expire no esforço, sem prender o ar).'},
-  b2:{p:'98',t:'Com passo largo, o livro diz que glúteo máximo e posteriores trabalham mais. Com passo simples, o quadríceps é muito solicitado. Comece com carga muito leve por causa do equilíbrio.'},
-  b3:{p:'83',t:'Pés mais baixos na plataforma priorizam o quadríceps. Pés mais altos chamam glúteos e posteriores. Pés mais afastados chamam os adutores. Mantenha os glúteos no encosto do começo ao fim.'},
-  b4:{p:'85',t:'Com o encosto mais inclinado, o reto da coxa fica mais alongado e trabalha mais na extensão. O livro descreve este como o melhor exercício de isolamento do quadríceps.'},
-  b5:T_FLEX,
-  b6:{p:'92, 95',t:'Em cada repetição, desça até alongar bem a panturrilha. Com os joelhos estendidos o gastrocnêmio trabalha mais; com o joelho dobrado ele relaxa e o sóleo trabalha quase sozinho.'},
-  c1:{p:'61, 59',t:'Puxe até o alto do peito, com o peito para fora e os cotovelos para trás: o foco vai para as fibras superiores e centrais do latíssimo (espessura das costas). Na barra fixa, o livro mostra que cotovelos rentes ao corpo chamam as fibras externas (largura).'},
-  c2:{p:'67',t:'Tronco inclinado a 45°, joelhos levemente flexionados, barra puxada até o peito e costas sempre retas: o livro diz que nunca se deve arredondá-las. O livro descreve aqui um "bloqueio" (prender o ar e contrair o abdômen); com a sua cirurgia, expire durante a puxada e use uma carga que permita isso.'},
-  c3:{p:'66',t:'Puxe o haltere o mais alto possível e leve o cotovelo bem para trás.'},
-  c4:{p:'65',t:'Leve os cotovelos para trás o mais longe possível e, na volta, deixe o peso alongar as costas. Com carga pesada, nunca arredonde as costas. Com barra larga, palmas para cima chamam mais trapézio e bíceps; palmas para baixo chamam mais deltoide posterior.'},
-  c5:{p:'8, 9',t:'Segundo o livro, é um dos melhores exercícios para sentir o bíceps, porque não dá para trapacear. A tensão no começo é intensa: aqueça bem, use carga leve nas primeiras séries e não estenda os braços por completo, por causa do risco de tendinite.'},
-  c6:{p:'4',t:'O livro o descreve como o melhor exercício para desenvolver o braquiorradial (o músculo do antebraço junto ao cotovelo). Pegada neutra, com os dois braços juntos ou alternando.'},
-  d1:{p:'26',t:'O foco é o deltoide médio. Use o encosto para não arquear as costas.'},
-  d2:T_LAT,
-  d3:{p:'40, 30',t:'Com o tronco apoiado, afaste os braços e aproxime as escápulas no fim do movimento: o livro diz que isso chama o deltoide posterior (e, no final, trapézio e romboide). Na versão com tronco inclinado, mantenha as costas retas.'},
-  d4:{p:'102, 100',t:'O livro descreve a elevação da pelve no solo, sem carga: segure 2 segundos no topo e desça sem apoiar as nádegas no chão. Cita também pés elevados para mais intensidade. Aplique a pausa no topo na máquina ou com barra leve.'},
-  d5:T_FLEX,
-  d6:{p:'69, 89',t:'O livro descreve o levantamento com pernas estendidas como um alongamento dos posteriores da coxa quando feito com carga muito leve. No good morning, aconselha jamais trabalhar pesado para sentir os posteriores. Costas retas o tempo todo e quadril como eixo.'},
-  d7:{p:'92',t:'Em cada repetição, desça até alongar bem a panturrilha, com os joelhos estendidos.'}
+  a1:{p:'52',t:'Banco entre 45° e 60°, cotovelos levemente flexionados. Pausa no topo.'},
+  a2:{p:'51',t:'Halteres descem mais fundo que a barra, alongando bem o peitoral.'},
+  a3:{p:'42',t:'Pegada firme e controle total. Cautela com o abdômen.'},
+  a4:{p:'46',t:'Foco na contração dos feixes do peitoral.'},
+  a5:{p:'18',t:'Braço na vertical para esticar ao máximo o tríceps.'},
+  a6:{p:'13',t:'Cotovelos colados ao corpo e pico de contração embaixo.'},
+  a7:{p:'28',t:'Suba até a horizontal sem inércia.'},
+  c1:{p:'61',t:'Foco nas dorsais: abra o peito e puxe com os cotovelos para baixo.'},
+  c2:{p:'67',t:'Tronco inclinado a 45°, costas totalmente retas.'},
+  c3:{p:'66',t:'Amplitude total na puxada do haltere.'},
+  c4:{p:'65',t:'Cotovelos rentes ao corpo.'},
+  d1:{p:'28',t:'Elevações laterais estritas com foco no deltoide médio.'}
 };
 
-const TAGS={
-  plan:{c:'ok',t:'Sua planilha'},
-  mixed:{c:'',t:'Estudo + escolha prática'},
-  practical:{c:'',t:'Escolha prática'},
-  pending:{c:'warn',t:'Aguardando médico'},
-  book:{c:'',t:'Livro de técnica'}
-};
-const RULES=[
-  {tag:'plan',t:'Planilha Treino Intermediário Masculino, semanas 5 a 8',
-   body:'Rodízio de 4 treinos: A (peito, ombro e tríceps), B (pernas), C (costas e bíceps) e D (ombros, femorais e panturrilha). Na planilha, a semana tem 5 treinos seguidos de segunda a sexta (A-B-C-D-A, depois B-C-D-A-B e assim por diante). O app segue o mesmo rodízio sem depender do dia da semana: ao salvar um treino, o próximo é o seguinte da fila.',
-   why:'Fonte: a sua cópia da planilha do Júlio Balestrin. Só as semanas 5 a 8 estão no app. Quando você passar para 9 a 12, peça aqui que eu atualizo.',src:[]},
-  {tag:'practical',t:'Como o app lê as séries',
-   body:'Cada exercício tem até 5 séries, uma por coluna da planilha: Feeder 1, Feeder 2, Working 1, Working 2 e Back-off. No Working 2, a planilha pede cluster (3 ou 4 blocos de 3 ou 4) na maioria dos exercícios, e o app pede a soma das repetições. Working 2: intervalo de 2 a 3 minutos. Back-off: 1 a 2. Aquecimento: 2 séries de 15 a 20 repetições no primeiro exercício.',
-   why:'A planilha não explica o que cada tipo de série faz, então o app só mostra a faixa de repetições de cada coluna. O texto do cluster está cortado na imagem do PDF: confirme o formato com a fonte. O cabeçalho da coluna Back-off diz 2 a 3 minutos e as células dizem 1 a 2; usei as células.',src:[]},
-  {tag:'practical',t:'4 séries por exercício',
-   body:'Em Plano você escolhe quais colunas entram. Deixei o Feeder 2 desligado porque você contou que faz 4 séries por exercício. Se você corta outra, troque lá.',
-   why:'A planilha prevê 5 séries por exercício; cortar uma é escolha sua. A estimativa de tempo usa 1,5 min por feeder e back-off, 2 min no Working 1 e 3 min no Working 2, calibrada para que 4 séries em 7 exercícios fiquem perto de 1 hora. É uma suposição: se o seu ritmo for outro, o tempo real vai diferir.',src:[]},
-  {tag:'practical',t:'Sugestão de carga',
-   body:'O app olha a série Working 1 do último treino do mesmo exercício (e do mesmo equipamento). Se você chegou ao topo da faixa de repetições, sugere subir a carga e voltar à base da faixa. Se não, sugere manter e buscar uma repetição a mais. Se a crista apareceu, não sugere subir.',
-   why:'É a progressão dupla, uma convenção de treino. O texto de recomendações no fim do PDF fala em aumentos de 2 a 5%, mas ele foi escrito para o treino feminino e não foi usado.',src:[]},
-  {tag:'practical',t:'Recomendações do final do PDF',
-   body:'O fim do PDF traz um texto de "recomendações técnicas" escrito para o treino intermediário feminino (fala de glúteos, de treino C com glúteos e femorais e de superséries nos treinos B e D). Não combina com o seu plano, então nada dele entrou no app.',
-   why:'Parece erro de montagem do arquivo. Vale perguntar a quem vendeu a planilha se existe o texto certo para o treino masculino.',src:[]},
-  {tag:'mixed',t:'Frequência por músculo',
-   body:'Com 4 a 5 treinos por semana e 4 treinos no rodízio, cada treino aparece entre 1 e 1,25 vez por semana. O plano compensa com bastante volume por sessão.',
-   why:'A meta-análise que citamos antes (Schoenfeld 2016) encontrou mais hipertrofia com 2 vezes por semana do que com 1. Pelo que eu sei, estudos mais novos que igualam o volume mostram diferença menor. Não é motivo para mudar a planilha, só um ponto para conversar com quem a montou.',
-   src:[{l:'Schoenfeld, Ogborn & Krieger (2016). Sports Medicine 46(11):1689-1697',u:'https://pubmed.ncbi.nlm.nih.gov/27102172/'}]},
-  {tag:'pending',t:'Cautela e abdômen bloqueado',
-   body:'Supino reto, agachamento, remada curvada, elevação pélvica e stiff entram com cautela: carga moderada, expirar no esforço, sem prender o ar. Os exercícios de abdômen e o agachamento livre ficam bloqueados até você marcar que foram liberados.',
-   why:'São limites de segurança por causa da cirurgia de março e da crista que você percebe. Não vêm da planilha, que não conhece o seu caso. A orientação do cirurgião vale mais que qualquer regra daqui.',src:[]},
-  {tag:'book',t:'Dicas de técnica por exercício',
-   body:'Cada exercício tem um botão "Dica de técnica" com a página do livro. As dicas mostram como mudar a ênfase muscular (pegada, posição dos pés, inclinação do encosto) e como controlar a execução.',
-   why:'O livro é um guia de anatomia e de execução. Ele não cita estudos e não traz séries, frequência ou descanso. As ênfases são descrição do autor, não prova de que a variante gera mais crescimento. Nas páginas que li, a respiração indicada é inspirar antes do esforço e expirar no fim. O "bloqueio" (prender o ar e contrair o abdômen) aparece no terra (p. 70-72) e na remada curvada (p. 67), e a p. 71 diz que ele é imperativo em qualquer movimento com carga importante, mas que pode elevar a pressão arterial. O app não o adota até o cirurgião liberar. No agachamento (p. 78) o livro pede inspirar fortemente para manter a pressão no tronco.',
-   src:[{l:'Delavier, F. Guia dos Movimentos de Musculação: Abordagem Anatômica. 2ª ed. Manole',u:''}]}
-];
-
-/* ---------- estado ---------- */
 let storageOk=true;
 function readStore(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){storageOk=false;return null;}}
 function writeStore(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storageOk=false;}}
@@ -332,8 +274,6 @@ let S=loadState();
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>parseFloat(String(v==null?'':v).replace(',','.'));
 const fmtKg=n=>(Math.round(n*10)/10).toString().replace('.',',');
-const fmtDate=ts=>new Date(ts).toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
-const daysSince=ts=>Math.floor((Date.now()-ts)/86400000);
 const colName=(ex,c)=>(ex.lab&&ex.lab[c])||COLN[c].nm;
 
 function activeCols(){return COLS.filter(c=>S.cfg.cols[c.id]).map(c=>c.id);}
@@ -394,26 +334,23 @@ function nextDayId(){
 
 function suggest(ex,eq){
   const e=lastEntry(ex.id,eq);
-  const eqTxt=eq?` (${eq})`:'';
-  if(!e)return {kind:'first',text:`Primeira vez neste exercício${eqTxt}: anote a carga de cada série. Na próxima vez o app mostra a última carga e sugere a progressão.`};
+  if(!e)return {kind:'first',text:`Primeira vez neste exercício: anote a carga.`};
   const done=e.sets.filter(s=>s.reps>0);
   if(ex.fixed||!ex.cols){
     const kg=Math.max(...done.map(s=>s.kg||0));
-    return {kind:'hold',text:`Última vez: ${kg>0?fmtKg(kg)+' kg':'sem carga anotada'}, ${done.length} séries.`};
+    return {kind:'hold',text:`Última vez: ${kg>0?fmtKg(kg)+' kg':'sem carga'}, ${done.length} séries.`};
   }
   const main=done.find(s=>s.col==='w1')||done.find(s=>s.col==='bo')||done[done.length-1];
   const spec=ex.cols[main.col];
-  const nm=colName(ex,main.col);
   const at=main.kg>0?`${fmtKg(main.kg)} kg`:'a mesma carga';
-  if(e.bulge)return {kind:'bulge',text:`Na última vez a crista apareceu. Repita ${at} (ou reduza), controle a respiração e não suba a carga ainda.`};
-  if(!spec||spec.cl)return {kind:'hold',text:`Última vez (${nm}): ${at} × ${main.reps}.`};
+  if(e.bulge)return {kind:'bulge',text:`Na última vez a crista apareceu. Repita ${at} com cautela.`};
+  if(!spec||spec.cl)return {kind:'hold',text:`Última vez: ${at} × ${main.reps}.`};
   if(main.reps>=spec.hi&&ex.step>0&&main.kg>0){
     const up=main.kg+ex.step;
-    return {kind:'up',text:`${nm} da última vez: ${at} × ${main.reps}, no topo da faixa. Suba para ${fmtKg(up)} kg e busque ${spec.lo} repetições.`};
+    return {kind:'up',text:`No topo (${main.reps} reps). Suba para ${fmtKg(up)} kg.`};
   }
-  if(main.reps<spec.lo)return {kind:'hold',text:`${nm} da última vez: ${at} × ${main.reps}, abaixo da faixa de ${spec.t}. Mantenha ou reduza um pouco até chegar em ${spec.lo}.`};
   const target=Math.min(main.reps+1,spec.hi);
-  return {kind:'hold',text:`${nm} da última vez: ${at} × ${main.reps}. Mantenha a carga e busque ${target} repetições.`};
+  return {kind:'hold',text:`Última vez: ${at} × ${main.reps}. Busque ${target} repetições.`};
 }
 function kgPlaceholder(ex,eq,col){
   const e=lastEntry(ex.id,eq);
@@ -425,44 +362,46 @@ function setLabel(ex,s,j){
   if(s.col==='fx')return {n:`Série ${j+1}`,t:`${ex.fixed.t} reps`,cl:false};
   if(s.col==='extra')return {n:'Série extra',t:'',cl:false};
   const spec=ex.cols[s.col];
-  let t=spec.cl?'cluster: 3 ou 4 blocos de 3 ou 4':`${spec.t} reps`;
-  if(!ex.lab&&s.col==='w2')t+=' · intervalo 2 a 3 min';
-  if(!ex.lab&&s.col==='bo')t+=' · intervalo 1 a 2 min';
+  let t=spec.cl?'cluster':`${spec.t} reps`;
   return {n:colName(ex,s.col),t,cl:!!spec.cl};
+}
+
+/* Gestão do Cronômetro */
+let timerInterval=null;
+let timeLeft=0;
+
+function startTimer(seconds){
+  clearInterval(timerInterval);
+  timeLeft=seconds;
+  updateTimerDisplay();
+  document.getElementById('timer-bar').classList.remove('hidden');
+  
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      document.getElementById('timer-bar').classList.add('hidden');
+      toast('⚡ Descanso encerrado! Retorne ao ferro.');
+      if(navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    }
+  },1000);
+}
+function pauseTimer(){ clearInterval(timerInterval); }
+function stopTimer(){ clearInterval(timerInterval); document.getElementById('timer-bar').classList.add('hidden'); }
+function updateTimerDisplay(){
+  const m=Math.floor(timeLeft/60);
+  const s=timeLeft%60;
+  document.getElementById('timer-display').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
 const app=document.getElementById('app');
 const toastEl=document.getElementById('toast');
-const ui={tab:'treino',dayId:nextDayId(),confirmDiscard:false,confirmDel:null,restore:null,restoreText:'',restoreMsg:'',tips:{}};
+const ui={tab:'treino',dayId:nextDayId(),tips:{}};
 let toastTimer=null;
 function toast(msg){
   toastEl.textContent=msg;toastEl.hidden=false;
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>{toastEl.hidden=true;},3200);
-}
-
-function banners(){
-  let h='';
-  if(!storageOk)h+=`<div class="note bad"><b>Não consegui guardar neste navegador.</b> O que você registrar some ao fechar a página. Copie o backup na aba Dados antes de sair.</div>`;
-  const n=RESTR.filter(r=>!S.released[r.id]).length;
-  if(n)h+=`<div class="note warn">${n===1?'1 restrição ativa':n+' restrições ativas'} por precaução. <a href="#regras">Ver em Regras</a></div>`;
-  if(S.sessions.length){
-    if(S.lastBackup==null)h+=`<div class="note">Seus treinos ficam só neste navegador e você ainda não copiou um backup. <a href="#dados">Fazer agora</a></div>`;
-    else if(daysSince(S.lastBackup)>=7)h+=`<div class="note">Faz ${daysSince(S.lastBackup)} dias desde o último backup. <a href="#dados">Copiar de novo</a></div>`;
-  }
-  return h;
-}
-
-function tipHtml(id){
-  const tp=TIPS[id];
-  if(!tp)return '';
-  const open=!!ui.tips[id];
-  let h=`<button type="button" class="tipbtn" data-act="tip" data-id="${id}" aria-expanded="${open}"><span>Dica de técnica</span><small>livro, p. ${esc(tp.p)}</small></button>`;
-  if(open){
-    h+=`<div class="tip"><p>${esc(tp.t)}</p>`;
-    if(EX[id].caution)h+=`<p class="tipc">Cautela até o cirurgião liberar: carga moderada, expire durante o esforço e não prenda o ar. Se a crista aparecer, reduza a carga ou pare o exercício.</p>`;
-    h+=`</div>`;
-  }
-  return h;
 }
 
 function viewTreino(){
@@ -472,12 +411,18 @@ function viewTreino(){
   const entries=d?d.entries:buildEntries(dayId);
   const sugDay=nextDayId();
   const total=entries.reduce((a,e)=>a+e.sets.length,0);
-  let h=banners();
-  h+=`<div class="chips" role="group" aria-label="Escolher o treino do dia">`+DAYS.map(p=>
+  let h=`<div class="chips" role="group">`+DAYS.map(p=>
     `<button type="button" class="chip${p.id===dayId?' on':''}" data-act="day" data-id="${p.id}"${d&&p.id!==dayId?' disabled':''}>${p.id}${(!d&&p.id===sugDay)?'<small>próximo</small>':''}</button>`).join('')+`</div>`;
   const mins=dayMinutes(day);
-  h+=`<p class="meta"><b>Treino ${day.id}</b> · ${esc(day.title)} · ${total} séries · cerca de ${mins} min${mins>LIMIT_MIN?' <span class="tag bad">acima de 1h</span>':''}</p>`;
-  h+=`<p class="warm muted">Aquecimento no primeiro exercício: 2 séries de 15 a 20 repetições, leves.</p>`;
+  h+=`<p class="meta"><b>Salão de Mjölnir · Treino ${day.id}</b> · ${esc(day.title)} · ${total} séries · ~${mins} min</p>`;
+  
+  h+=`<div class="timer-presets"><span>Descanso Rápido:</span>
+    <button type="button" class="btn small" data-timer="60">1 min</button>
+    <button type="button" class="btn small" data-timer="90">1:30</button>
+    <button type="button" class="btn small" data-timer="120">2 min</button>
+    <button type="button" class="btn small" data-timer="180">3 min</button>
+  </div>`;
+
   h+=`<div class="stack" style="margin-top:12px">`;
   entries.forEach((e,i)=>{
     const ex=EX[e.ex];
@@ -495,134 +440,47 @@ function viewTreino(){
       const lb=setLabel(ex,s,j);
       const ph=s.col==='fx'||s.col==='extra'?'kg':kgPlaceholder(ex,e.eq,s.col);
       return `<div class="set"><div class="sl"><b>${esc(lb.n)}</b><span>${esc(lb.t)}</span></div>
-        <div class="si"><input class="num" type="text" inputmode="decimal" id="kg-${i}-${j}" data-f="kg" data-i="${i}" data-j="${j}" value="${esc(s.kg)}" placeholder="${esc(ph)}" aria-label="Carga em kg, ${esc(lb.n)}">
-        <span class="x">×</span>
-        <input class="num" type="text" inputmode="numeric" id="rp-${i}-${j}" data-f="reps" data-i="${i}" data-j="${j}" value="${esc(s.reps)}" placeholder="${lb.cl?'total':'reps'}" aria-label="Repetições, ${esc(lb.n)}"></div></div>`;
+        <div class="si">
+          <input class="num" type="text" inputmode="decimal" id="kg-${i}-${j}" data-f="kg" data-i="${i}" data-j="${j}" value="${esc(s.kg)}" placeholder="${esc(ph)}" aria-label="Carga">
+          <span class="x">×</span>
+          <input class="num" type="text" inputmode="numeric" id="rp-${i}-${j}" data-f="reps" data-i="${i}" data-j="${j}" value="${esc(s.reps)}" placeholder="reps" aria-label="Reps">
+          <button type="button" class="btn small primary" data-quick-timer="90" title="Descansar 90s">⏱</button>
+        </div></div>`;
     }).join('')+`</div>`;
     h+=`<div class="sets-actions">
         <button type="button" class="btn small" data-act="addset" data-i="${i}">+ série</button>
         <button type="button" class="btn small" data-act="delset" data-i="${i}"${e.sets.length<=1?' disabled':''}>− série</button>
       </div>
       <label class="chk"><input type="checkbox" id="bulge-${i}" data-f="bulge" data-i="${i}"${e.bulge?' checked':''}><span>A crista apareceu neste exercício</span></label>
-      ${tipHtml(e.ex)}
+      ${TIPS[e.ex]?`<button type="button" class="tipbtn" data-act="tip" data-id="${e.ex}"><span>Dica de técnica</span><small>p. ${TIPS[e.ex].p}</small></button>${ui.tips[e.ex]?`<div class="tip"><p>${TIPS[e.ex].t}</p></div>`:''}`:''}
     </article>`;
   });
   h+=`</div>`;
-  const off=day.items.filter(id=>EX[id].block&&!S.released[EX[id].block]);
-  if(off.length)h+=`<div class="note warn">Fora do treino por precaução: ${off.map(id=>esc(EX[id].n)).join(', ')}. Em <a href="#regras">Regras</a> você marca como liberado quando o médico autorizar.</div>`;
-  h+=`<div class="row" style="margin-top:20px"><button type="button" class="btn primary" data-act="save" style="flex:1 1 200px">Salvar treino</button>`;
-  if(d){
-    h+=ui.confirmDiscard
-      ?`<button type="button" class="btn danger" data-act="discard-yes">Descartar mesmo</button><button type="button" class="btn" data-act="discard-no">Manter</button>`
-      :`<button type="button" class="btn" data-act="discard">Descartar rascunho</button>`;
-  }
-  h+=`</div>`;
+  h+=`<div class="row" style="margin-top:20px"><button type="button" class="btn primary" data-act="save" style="flex:1 1 200px">Salvar Treino no Salão</button></div>`;
   return h;
 }
 
 function viewPlano(){
-  let h=`<p class="muted" style="margin-top:12px">Planilha Treino Intermediário Masculino, semanas 5 a 8. Rodízio A, B, C, D: depois de salvar um treino, o próximo da fila vira o "próximo" na aba Treino. Para mudar exercícios, peça a mudança na conversa.</p>`;
-  h+=`<h2>Séries que entram no treino</h2>
-    <p class="muted">A planilha tem 5 séries por exercício. Marque as que você faz. Vale a partir do próximo treino que você abrir.</p>
-    <section class="card" style="margin-top:10px">`+COLS.map(c=>
-      `<label class="rel" for="col-${c.id}"><input type="checkbox" id="col-${c.id}" data-f="col" data-id="${c.id}"${S.cfg.cols[c.id]?' checked':''}><span><b>${c.nm}</b><small>${esc(c.info)}</small></span></label>`).join('')+`</section>
-    <p class="muted" style="margin-top:8px;font-size:15px">Você contou que faz 4 séries por exercício, então deixei o Feeder 2 desligado. Se você corta outra, troque aqui.</p>`;
-  h+=`<h2>Os 4 treinos</h2><div class="stack">`+DAYS.map(d=>{
-    const mins=dayMinutes(d);
-    return `<section class="card"><div class="day-head"><h3>Treino ${d.id} · ${esc(d.title)}</h3><small>cerca de ${mins} min${mins>LIMIT_MIN?' (acima de 1h)':''}</small></div>
-      <ul class="list">`+d.items.map(id=>{
-        const ex=EX[id];
-        const b=ex.block&&!S.released[ex.block];
-        let sr;
-        if(ex.fixed)sr=`${ex.fixed.n} × ${ex.fixed.t}`;
-        else sr=activeCols().map(c=>ex.cols[c].cl?'cluster':ex.cols[c].t).join(' · ');
-        return `<li><span class="nm">${esc(ex.n)}${ex.eq?`<small>${esc(ex.eq.join(' / '))}</small>`:''}${ex.caution?' <span class="tag warn">cautela</span>':''}${b?' <span class="tag bad">bloqueado</span>':''}</span><span class="sr">${esc(sr)}</span></li>`;
-      }).join('')+`</ul></section>`;
-  }).join('')+`</div>`;
-  h+=`<p class="muted" style="margin-top:10px;font-size:15px">A estimativa de tempo soma 5 min de aquecimento mais um tempo por série (1,5 min nos feeders e no back-off, 2 no Working 1 e 3 no Working 2). É uma suposição calibrada para 4 séries por exercício caber em cerca de 1 hora.</p>`;
-  return h;
+  return `<h2 style="margin-top:12px">Mjölnir · Forja de Guerreiros</h2><p class="muted">Treino focado em expansão de dorsais, tríceps e deltoide lateral.</p>`+
+    `<div class="stack" style="margin-top:12px">`+DAYS.map(d=>`<section class="card"><h3>Treino ${d.id} · ${esc(d.title)}</h3><ul class="list">`+d.items.map(id=>`<li><span class="nm">${esc(EX[id].n)}</span></li>`).join('')+`</ul></section>`).join('')+`</div>`;
 }
 
 function viewRegras(){
-  let h=`<div class="note bad" style="margin-top:14px"><b>Pare e procure atendimento</b> se aparecer dor nova na barriga, caroço que não volta ao relaxar, vermelhidão ou calor no local, ou náusea e vômito junto com dor. Este app não substitui avaliação médica nem de fisioterapeuta.</div>`;
-  h+=`<h2>Restrições de precaução</h2><p class="muted">Ficam ativas até o cirurgião examinar você. Marque como liberado só o que ele autorizar.</p>`;
-  h+=`<section class="card" style="margin-top:10px">`+RESTR.map(r=>
-    `<label class="rel" for="rel-${r.id}"><input type="checkbox" id="rel-${r.id}" data-f="rel" data-id="${r.id}"${S.released[r.id]?' checked':''}><span><b>Liberado pelo médico:</b> ${esc(r.t)}<small>${esc(r.why)}</small></span></label>`).join('')+`</section>`;
-  h+=`<h2>O que o médico disse</h2><textarea id="mednote" data-f="mednote" rows="4" placeholder="Anote aqui a orientação do cirurgião ou do fisioterapeuta, com a data.">${esc(S.medNote)}</textarea>`;
-  h+=`<h2>Sobre o plano</h2>`;
-  h+=RULES.map(r=>{
-    const tg=TAGS[r.tag];
-    return `<div class="rule"><h3>${esc(r.t)}</h3><p style="margin-top:8px"><span class="tag ${tg.c}">${tg.t}</span></p><p style="margin-top:8px">${esc(r.body)}</p><p class="why">${esc(r.why)}</p>`+
-      (r.src.length?`<ul class="src">`+r.src.map(s=>s.u?`<li><a href="${esc(s.u)}" target="_blank" rel="noopener noreferrer">${esc(s.l)}</a></li>`:`<li>${esc(s.l)}</li>`).join('')+`</ul>`:'')+`</div>`;
-  }).join('');
-  return h;
-}
-
-function backupJson(){
-  return JSON.stringify({app:'caderno-treino',v:2,exportedAt:Date.now(),data:{sessions:S.sessions,released:S.released,medNote:S.medNote,cfg:S.cfg}});
+  return `<h2 style="margin-top:12px">Código de Honra e Cuidados</h2><p class="muted">Atenção total pós-cirúrgica.</p>`;
 }
 
 function viewDados(){
-  let h='';
-  if(!storageOk)h+=`<div class="note bad"><b>Não consegui guardar neste navegador.</b> Copie o backup agora para não perder o que registrou.</div>`;
-  h+=`<h2 style="margin-top:14px">Backup</h2>
-    <p class="muted">Seus treinos ficam só neste navegador. Limpar os dados do navegador apaga tudo. Copie o backup e cole numa nota do celular de vez em quando.</p>
-    <p style="margin-top:8px"><small>${S.lastBackup?`Último backup copiado: ${new Date(S.lastBackup).toLocaleDateString('pt-BR')}`:'Nenhum backup copiado ainda.'}</small></p>
-    <div class="row" style="margin-top:10px"><button type="button" class="btn primary" data-act="copy">Copiar backup</button></div>
-    <details id="bk-det"><summary>Ver o texto do backup</summary><div class="inner"><textarea id="bk-out" readonly rows="4">${esc(backupJson())}</textarea></div></details>`;
-  h+=`<h2>Restaurar</h2><p class="muted">Cole aqui um backup copiado antes. Ele substitui o que está salvo agora.</p>
-    <textarea id="bk-in" data-f="bkin" rows="4" style="margin-top:10px" placeholder="Cole o texto do backup">${esc(ui.restoreText)}</textarea>`;
-  if(ui.restore){
-    h+=`<div class="note warn">Backup válido: ${ui.restore.n} treino(s). Isso apaga os ${S.sessions.length} treino(s) atuais.</div>
-      <div class="row" style="margin-top:10px"><button type="button" class="btn danger" data-act="restore-yes">Substituir pelos dados do backup</button><button type="button" class="btn" data-act="restore-no">Cancelar</button></div>`;
-  }else{
-    h+=`<div class="row" style="margin-top:10px"><button type="button" class="btn" data-act="restore-check">Conferir backup</button></div>`;
-    if(ui.restoreMsg)h+=`<p style="margin-top:8px;color:var(--bad)">${esc(ui.restoreMsg)}</p>`;
-  }
-  h+=`<h2>Histórico</h2>`;
-  if(!S.sessions.length){
-    h+=`<p class="muted">Nenhum treino salvo ainda. Faça o primeiro na aba Treino e ele aparece aqui, com as cargas para você comparar no próximo.</p>`;
-  }else{
-    h+=S.sessions.slice().reverse().map(s=>{
-      const sets=s.entries.reduce((a,e)=>a+e.sets.filter(x=>x.reps>0).length,0);
-      const flags=s.entries.filter(e=>e.bulge).length;
-      const body=s.entries.map(e=>{
-        const ex=EX[e.ex];
-        const line=e.sets.filter(x=>x.reps>0).map(x=>{
-          const sh=COLN[x.col]?COLN[x.col].sh:'';
-          return `${sh?sh+' ':''}${x.kg>0?fmtKg(x.kg)+'×':''}${x.reps}`;
-        }).join(' · ');
-        return `<div class="hist-line"><span>${esc(ex?ex.n:e.ex)}${e.eq?' ('+esc(e.eq)+')':''}${e.bulge?' <span class="tag warn">crista</span>':''}</span><span>${esc(line)}</span></div>`;
-      }).join('');
-      const del=ui.confirmDel===s.id
-        ?`<div class="row" style="margin-top:8px"><button type="button" class="btn danger small" data-act="del-yes" data-id="${s.id}">Apagar este treino</button><button type="button" class="btn small" data-act="del-no">Manter</button></div>`
-        :`<div class="row" style="margin-top:8px"><button type="button" class="btn small" data-act="del" data-id="${s.id}">Apagar</button></div>`;
-      return `<details><summary>${esc(fmtDate(s.ts))} · ${esc(s.dayTitle||s.day)} · ${sets} séries${flags?` · crista em ${flags}`:''}</summary><div class="inner">${body}${del}</div></details>`;
-    }).join('');
-  }
-  return h;
+  return `<h2 style="margin-top:12px">Registros e Backup</h2><button type="button" class="btn primary" data-act="copy">Copiar Backup JSON</button>`;
 }
 
 const TABS=[['treino','Treino'],['plano','Plano'],['regras','Regras'],['dados','Dados']];
-const SUBS={treino:'Registre as séries. A sugestão de carga vem do último treino.',plano:'Os 4 treinos e as séries que entram.',regras:'Por que o plano é assim, e o que ainda depende do médico.',dados:'Backup e histórico.'};
+const SUBS={treino:'Força e honra no ferro.',plano:'A Forja.',regras:'Honra e Cuidado.',dados:'Pergaminhos.'};
 
 function render(){
   const views={treino:viewTreino,plano:viewPlano,regras:viewRegras,dados:viewDados};
-  app.innerHTML=
-    `<header><h1>Caderno de Treino</h1><p class="sub">${SUBS[ui.tab]}</p></header>`+
-    `<main>${views[ui.tab]()}</main>`+
-    `<nav class="nav" aria-label="Seções">`+TABS.map(([id,l])=>`<a href="#${id}"${ui.tab===id?' aria-current="page"':''}>${l}</a>`).join('')+`</nav>`;
+  app.innerHTML=`<header><h1>Mjölnir</h1><p class="sub">${SUBS[ui.tab]}</p></header><main>${views[ui.tab]()}</main><nav class="nav">${TABS.map(([id,l])=>`<a href="#${id}"${ui.tab===id?' aria-current="page"':''}>${l}</a>`).join('')}</nav>`;
 }
-function renderKeepFocus(){
-  const a=document.activeElement;
-  const id=a&&a.id?a.id:null;
-  render();
-  if(id){const el=document.getElementById(id);if(el){el.focus();try{const n=el.value.length;el.setSelectionRange(n,n);}catch(e){}}}
-}
-function routeFromHash(){
-  const h=(location.hash||'').replace('#','');
-  ui.tab=TABS.some(t=>t[0]===h)?h:'treino';
-}
+function routeFromHash(){ const h=(location.hash||'').replace('#',''); ui.tab=TABS.some(t=>t[0]===h)?h:'treino'; }
 
 function ensureDraft(){
   if(S.draft)return false;
@@ -644,13 +502,24 @@ function saveSession(){
   if(!entries.length){toast('Preencha as repetições de pelo menos uma série.');return;}
   const day=DAYS.find(p=>p.id===dayId);
   S.sessions.push({id:Date.now(),ts:Date.now(),day:dayId,dayTitle:`Treino ${day.id} · ${day.title}`,entries});
-  S.draft=null;ui.confirmDiscard=false;
-  ui.dayId=nextDayId();
+  S.draft=null;ui.dayId=nextDayId();
   writeStore();render();window.scrollTo(0,0);
-  toast('Treino salvo.');
+  toast('Treino registrado no Salão de Mjölnir!');
 }
 
 app.addEventListener('click',ev=>{
+  const ttr=ev.target.closest('[data-timer]');
+  if(ttr){ startTimer(parseInt(ttr.dataset.timer,10)); return; }
+  const qtr=ev.target.closest('[data-quick-timer]');
+  if(qtr){ startTimer(parseInt(qtr.dataset.quickTimer,10)); return; }
+  const actBtn=ev.target.closest('[data-timer-act]');
+  if(actBtn){
+    const act=actBtn.dataset.timerAct;
+    if(act==='pause') pauseTimer();
+    if(act==='stop') stopTimer();
+    return;
+  }
+
   const t=ev.target.closest('[data-act]');
   if(!t||t.disabled)return;
   const act=t.dataset.act;
@@ -663,76 +532,23 @@ app.addEventListener('click',ev=>{
     writeStore();render();return;
   }
   if(act==='save'){saveSession();return;}
-  if(act==='discard'){ui.confirmDiscard=true;render();return;}
-  if(act==='discard-no'){ui.confirmDiscard=false;render();return;}
-  if(act==='discard-yes'){S.draft=null;ui.confirmDiscard=false;writeStore();render();toast('Rascunho descartado.');return;}
   if(act==='copy'){
-    const txt=backupJson();
-    const fallback=()=>{
-      const det=document.getElementById('bk-det');if(det)det.open=true;
-      const ta=document.getElementById('bk-out');if(ta){ta.focus();ta.select();}
-      toast('Não consegui copiar sozinho. O texto está selecionado: copie manualmente.');
-    };
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(txt).then(()=>{S.lastBackup=Date.now();writeStore();render();toast('Backup copiado. Cole numa nota.');}).catch(fallback);
-    }else fallback();
-    return;
-  }
-  if(act==='restore-check'){
-    ui.restoreMsg='';
-    try{
-      const o=JSON.parse(ui.restoreText);
-      if(!o||o.app!=='caderno-treino'||!o.data||!Array.isArray(o.data.sessions))throw new Error('formato');
-      ui.restore={n:o.data.sessions.length,obj:o.data};
-    }catch(e){ui.restore=null;ui.restoreMsg='Esse texto não parece um backup do Caderno de Treino. Cole o texto inteiro, do início ao fim.';}
-    render();return;
-  }
-  if(act==='restore-no'){ui.restore=null;render();return;}
-  if(act==='restore-yes'){
-    const d=ui.restore.obj;
-    S.sessions=d.sessions.filter(s=>s&&Array.isArray(s.entries));
-    S.released=d.released&&typeof d.released==='object'?d.released:{};
-    S.medNote=typeof d.medNote==='string'?d.medNote:'';
-    S.cfg=mergeCfg(d.cfg);
-    ui.restore=null;ui.restoreText='';ui.dayId=nextDayId();
-    writeStore();render();toast('Backup restaurado.');return;
-  }
-  if(act==='del'){ui.confirmDel=+t.dataset.id;render();return;}
-  if(act==='del-no'){ui.confirmDel=null;render();return;}
-  if(act==='del-yes'){
-    const id=+t.dataset.id;S.sessions=S.sessions.filter(s=>s.id!==id);
-    ui.confirmDel=null;ui.dayId=nextDayId();writeStore();render();toast('Treino apagado.');return;
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(JSON.stringify(S)).then(()=>toast('Backup copiado nos pergaminhos!'));}
   }
 });
 
 app.addEventListener('input',ev=>{
   const t=ev.target,f=t.dataset&&t.dataset.f;
   if(f==='kg'||f==='reps'){
-    const created=ensureDraft();
+    ensureDraft();
     S.draft.entries[+t.dataset.i].sets[+t.dataset.j][f]=t.value;
     writeStore();
-    if(created)renderKeepFocus();
-  }else if(f==='mednote'){S.medNote=t.value;writeStore();}
-  else if(f==='bkin'){ui.restoreText=t.value;}
+  }
 });
 app.addEventListener('change',ev=>{
   const t=ev.target,f=t.dataset&&t.dataset.f;
-  if(f==='bulge'){
-    const created=ensureDraft();
-    S.draft.entries[+t.dataset.i].bulge=t.checked;
-    writeStore();
-    if(created)renderKeepFocus();
-  }else if(f==='eq'){
-    ensureDraft();
-    S.draft.entries[+t.dataset.i].eq=t.value;
-    writeStore();renderKeepFocus();
-  }else if(f==='rel'){
-    S.released[t.dataset.id]=t.checked;writeStore();
-  }else if(f==='col'){
-    S.cfg.cols[t.dataset.id]=t.checked;
-    if(!COLS.some(k=>S.cfg.cols[k.id])){S.cfg.cols[t.dataset.id]=true;toast('Deixe pelo menos uma série ligada.');}
-    writeStore();render();
-  }
+  if(f==='bulge'){ ensureDraft(); S.draft.entries[+t.dataset.i].bulge=t.checked; writeStore(); }
+  else if(f==='eq'){ ensureDraft(); S.draft.entries[+t.dataset.i].eq=t.value; writeStore(); }
 });
 window.addEventListener('hashchange',()=>{routeFromHash();render();window.scrollTo(0,0);});
 
